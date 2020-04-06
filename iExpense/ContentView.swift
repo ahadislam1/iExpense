@@ -8,13 +8,13 @@
 
 import SwiftUI
 
-class User: ObservableObject {
+class ObservableUser: ObservableObject {
     @Published var firstName = "Bilbo"
     @Published var lastName = "Baggins"
 }
 
 struct ObservableObjectView: View {
-    @ObservedObject var user = User()
+    @ObservedObject var user = ObservableUser()
     
     var body: some View {
         VStack {
@@ -80,7 +80,7 @@ struct EditingRowsView: View {
     }
 }
 
-struct ContentView: View {
+struct UserDefaultsView: View {
     @State private var tapCount = UserDefaults.standard.integer(forKey: "Tap")
     
     
@@ -88,6 +88,25 @@ struct ContentView: View {
         Button("tap count = \(tapCount)") {
             self.tapCount += 1
             UserDefaults.standard.set(self.tapCount, forKey: "Tap")
+        }
+    }
+}
+
+struct User: Codable {
+    var firstName: String
+    var lastName: String
+}
+
+struct ContentView: View {
+    @State private var user = User(firstName: "Taylor", lastName: "Swift")
+    
+    var body: some View {
+        Button("Save User") {
+            let encoder = JSONEncoder()
+            
+            if let data = try? encoder.encode(self.user) {
+                UserDefaults.standard.set(data, forKey: "UserData")
+            }
         }
     }
 }
