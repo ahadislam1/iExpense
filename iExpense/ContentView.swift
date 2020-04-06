@@ -51,7 +51,7 @@ struct SecondView: View {
     }
 }
 
-struct ContentView: View {
+struct EditingRowsView: View {
     @State private var numbers = [Int]()
     @State private var currentNumber = 1
     
@@ -77,6 +77,18 @@ struct ContentView: View {
     func removeRows(at offsets: IndexSet) {
         numbers.remove(atOffsets: offsets)
         
+    }
+}
+
+struct ContentView: View {
+    @State private var tapCount = UserDefaults.standard.integer(forKey: "Tap")
+    
+    
+    var body: some View {
+        Button("tap count = \(tapCount)") {
+            self.tapCount += 1
+            UserDefaults.standard.set(self.tapCount, forKey: "Tap")
+        }
     }
 }
 
