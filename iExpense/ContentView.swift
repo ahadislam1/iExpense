@@ -70,7 +70,7 @@ struct EditingRowsView: View {
                     self.currentNumber += 1
                 }
             }
-        .navigationBarItems(leading: EditButton())
+            .navigationBarItems(leading: EditButton())
         }
     }
     
@@ -97,7 +97,7 @@ struct User: Codable {
     var lastName: String
 }
 
-struct ContentView: View {
+struct JSONCodingView: View {
     @State private var user = User(firstName: "Taylor", lastName: "Swift")
     
     var body: some View {
@@ -108,6 +108,45 @@ struct ContentView: View {
                 UserDefaults.standard.set(data, forKey: "UserData")
             }
         }
+    }
+}
+
+struct ExpenseItem: Identifiable {
+    let id = UUID()
+    let name: String
+    let type: String
+    let amount: Int
+}
+
+class Expenses: ObservableObject {
+    @Published var items = [ExpenseItem]()
+}
+
+struct ContentView: View {
+    @ObservedObject var expenses = Expenses()
+    
+    var body: some View {
+        NavigationView {
+            List {
+                ForEach(expenses.items) { item in
+                    Text(item.name)
+                }
+            .onDelete(perform: removeItems(at:))
+            }
+            .navigationBarTitle("iExpense")
+            .navigationBarItems(trailing:
+                Button(action: {
+                    let expense = ExpenseItem(name: "Test", type: "Personal", amount: 5)
+                    self.expenses.items.append(expense)
+                }) {
+                    Image(systemName: "plus")
+                }
+            )
+        }
+    }
+    
+    func removeItems(at offsets: IndexSet) {
+        expenses.items.remove(atOffsets: offsets)
     }
 }
 
